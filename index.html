@@ -26,7 +26,9 @@
       box-shadow: 0 25px 60px rgba(255, 107, 129, 0.3);
       text-align: center;
       border: 8px solid #ffffff;
-      animation: bounceIn 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      /* รวมอนิเมชั่น bounceIn ตอนเริ่ม และ floating ตลอดเวลา */
+      animation: bounceIn 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55), 
+                 floating 3s ease-in-out infinite;
       position: relative;
     }
 
@@ -61,7 +63,7 @@
     }
 
     .cute-button:hover {
-      transform: scale(1.1) translateY(-5px);
+      transform: scale(1.1);
       background: linear-gradient(135deg, #ff8797, #ff6b81);
     }
 
@@ -74,6 +76,11 @@
       0% { transform: scale(0.3); opacity: 0; }
       70% { transform: scale(1.05); opacity: 1; }
       100% { transform: scale(1); }
+    }
+
+    @keyframes floating {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
     }
 
     @keyframes heartbeat {
