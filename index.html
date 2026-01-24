@@ -60,19 +60,19 @@
     }
 
     .cute-button {
-      background-color: #57d6e7;
+      background-color: #888888;
       border: none;
       padding: 12px 25px;
       font-size: 18px;
       color: white;
       border-radius: 30px;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(53, 134, 121, 0.6);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
       transition: background 0.3s;
     }
 
     .cute-button:hover {
-      background-color: #5aa8d4;
+      background-color: #8a8a8a;
     }
 
     @keyframes fadeIn {
@@ -100,7 +100,7 @@
     }
 
     .sparkle {
-      content: "✨";
+      content: "❤️";
       position: absolute;
       top: 10%;
       left: 10%;
@@ -117,17 +117,17 @@
   </style>
 </head>
 <body>
-  <div class="sparkle">✨</div>
+  <div class="sparkle">❤️</div>
 
   <div class="container">
     <div class="gif-container">
-      <img src="https://media.tenor.com/FTOSKbscoloAAAAj/loverlyu-huh.gif" alt="Gif">
+      <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGhodDA4dnkyejJiY2N4N2Zhc3N1Zm1uZWU5ZzFpODJ1d3R2aWZ2eiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ztpMY1t5VYWlO/giphy.gif" alt="Gif">
     </div>
     <div class="text-container">
-      <p>???</p>
+      <p>กดข้างล่าง</p>
     </div>
     <div class="button-container">
-      <button class="cute-button" id="Btn">Click me bro</button>
+      <button class="cute-button" id="Btn">กดตรงนี้</button>
     </div>
   </div>
 
@@ -137,11 +137,10 @@
       window.location.href = 'https://lucky007-void.github.io/Test2/';
     });
 
-    // สร้างหัวใจลอยขึ้นแบบสุ่มตำแหน่งรอบจอ
     function createHeart() {
       const heart = document.createElement('div');
       heart.classList.add('heart');
-      heart.textContent = '👍';
+      heart.textContent = '❤️';
       heart.style.left = Math.random() * 100 + 'vw';
       heart.style.bottom = '-30px';
       heart.style.fontSize = `${Math.random() * 20 + 20}px`;
@@ -152,9 +151,9 @@
       }, 4000);
     }
 
-    // เรียกฟังก์ชันทุก 300 มิลลิวินาที
     setInterval(createHeart, 300);
   </script>
 </body>
 </html>
+
 
