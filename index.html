@@ -9,7 +9,7 @@
     body {
       background-color: #ffe4e1;
       background-image: radial-gradient(#ffb6c1 1.5px, transparent 1.5px);
-      background-size: 40px 40px;
+      background-size: 30px 30px;
       margin: 0;
       height: 100vh;
       display: flex;
@@ -21,55 +21,52 @@
 
     .container {
       background: rgba(255, 255, 255, 0.95);
-      padding: 50px;
-      border-radius: 50px;
-      box-shadow: 0 25px 60px rgba(255, 107, 129, 0.3);
+      padding: 30px;
+      border-radius: 40px;
+      box-shadow: 0 15px 40px rgba(255, 107, 129, 0.3);
       text-align: center;
-      border: 8px solid #ffffff;
-      /* รวมอนิเมชั่น bounceIn ตอนเริ่ม และ floating ตลอดเวลา */
+      border: 6px solid #ffffff;
       animation: bounceIn 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55), 
                  floating 3s ease-in-out infinite;
       position: relative;
+      width: 85%;
+      max-width: 400px;
     }
 
     .gif-container img {
-      width: 220px;
-      border-radius: 30px;
-      margin-bottom: 25px;
-      border: 5px solid #ffb6c1;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 200px;
+      border-radius: 25px;
+      margin-bottom: 20px;
+      border: 4px solid #ffb6c1;
     }
 
     .text-container p {
-      font-size: 32px;
+      font-size: 26px;
       color: #ff6b81;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
       font-weight: bold;
-      text-shadow: 1px 1px 0px #fff;
     }
 
     .cute-button {
       background: linear-gradient(135deg, #ff6b81, #ff8797);
       border: none;
-      padding: 18px 60px;
-      font-size: 26px;
+      padding: 15px 40px;
+      font-size: 22px;
       color: white;
       border-radius: 100px;
       cursor: pointer;
       font-family: 'Patrick Hand', cursive;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 10px 0 #ee5253, 0 15px 30px rgba(255, 107, 129, 0.4);
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 0 #ee5253, 0 10px 20px rgba(255, 107, 129, 0.3);
       animation: heartbeat 1.5s infinite;
+      width: 100%;
     }
 
-    .cute-button:hover {
-      transform: scale(1.1);
-      background: linear-gradient(135deg, #ff8797, #ff6b81);
-    }
-
-    .cute-button:active {
-      transform: translateY(4px);
-      box-shadow: 0 4px 0 #ee5253;
+    @media (max-width: 480px) {
+      .container { padding: 25px; }
+      .text-container p { font-size: 22px; }
+      .cute-button { font-size: 20px; padding: 12px 30px; }
     }
 
     @keyframes bounceIn {
@@ -80,15 +77,12 @@
 
     @keyframes floating {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
+      50% { transform: translateY(-12px); }
     }
 
     @keyframes heartbeat {
-      0% { transform: scale(1); }
-      15% { transform: scale(1.03); }
-      30% { transform: scale(1); }
-      45% { transform: scale(1.03); }
-      100% { transform: scale(1); }
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
   </style>
 </head>
@@ -102,7 +96,6 @@
     </div>
     <button class="cute-button" id="Btn">กดตรงนี้</button>
   </div>
-
   <script>
     document.getElementById('Btn').addEventListener('click', () => {
       window.location.href = 'https://lucky007-void.github.io/Test2/';
