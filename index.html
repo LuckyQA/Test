@@ -1,247 +1,77 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev System Diagnostics Terminal</title>
+    <title>Rare Egg Tracker</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #0c1017;
-            color: #00ff66;
-            font-family: 'Consolas', 'Courier New', monospace;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .terminal {
-            width: 100%;
-            max-width: 900px;
-            background-color: #111822;
-            border: 1px solid #00ff6644;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 255, 102, 0.15);
-            overflow: hidden;
-        }
-        .terminal-header {
-            background-color: #1b2432;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #00ff6622;
-        }
-        .buttons {
-            display: flex;
-            gap: 8px;
-            margin-right: 15px;
-        }
-        .btn {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        .close { background-color: #ff5f56; }
-        .minimize { background-color: #ffbd2e; }
-        .maximize { background-color: #27c93f; }
-        .title {
-            color: #8b949e;
-            font-size: 13px;
-        }
-        .terminal-body {
-            padding: 20px;
-            min-height: 480px;
-        }
-        .prompt-line {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .prompt-text {
-            color: #58a6ff;
-        }
-        .start-btn {
-            background-color: transparent;
-            color: #00ff66;
-            border: 1px solid #00ff66;
-            padding: 8px 18px;
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
-            box-shadow: 0 0 5px rgba(0,255,102,0.2);
-            transition: all 0.2s ease;
-        }
-        .start-btn:hover {
-            background-color: #00ff66;
-            color: #0c1017;
-            box-shadow: 0 0 15px #00ff66;
-        }
-        .output {
-            line-height: 1.6;
-            white-space: pre-wrap;
-            font-size: 14px;
-        }
-        .key { color: #58a6ff; }
-        .value { color: #f0883e; }
-        .section-title {
-            color: #d2a8ff;
-            margin-top: 18px;
-            margin-bottom: 6px;
-            border-bottom: 1px dashed #30363d;
-            padding-bottom: 4px;
-            font-weight: bold;
-        }
-        .cursor {
-            display: inline-block;
-            width: 8px;
-            height: 15px;
-            background-color: #00ff66;
-            animation: blink 0.8s infinite;
-            vertical-align: middle;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
+        :root { --bg: #121212; --surface: #1e1e1e; --text: #e0e0e0; --primary: #bb86fc; --egg: #ffd700; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 2rem; display: flex; flex-direction: column; align-items: center; }
+        h1 { margin-bottom: 1rem; }
+        .search-box { width: 100%; max-width: 400px; padding: 10px 15px; border-radius: 8px; border: 1px solid #333; background-color: var(--surface); color: white; margin-bottom: 2rem; font-size: 1rem; }
+        .search-box:focus { outline: none; border-color: var(--primary); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; width: 100%; max-width: 1000px; }
+        .card { background-color: var(--surface); padding: 1.5rem; border-radius: 12px; border: 1px solid #333; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); }
+        .username { font-size: 1.2rem; font-weight: bold; color: var(--primary); margin-bottom: 10px; }
+        .stat { margin: 5px 0; font-size: 0.95rem; display: flex; justify-content: space-between;}
+        .stat.highlight { color: var(--egg); font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="terminal">
-    <div class="terminal-header">
-        <div class="buttons">
-            <div class="btn close"></div>
-            <div class="btn minimize"></div>
-            <div class="btn maximize"></div>
-        </div>
-        <div class="title">cmd.exe - sysdiagnostics@dev-terminal:~</div>
-    </div>
-    <div class="terminal-body">
-        <div class="prompt-line">
-            <span class="prompt-text">C:\Users\Developer></span>
-            <button class="start-btn" id="startBtn" onclick="runDiagnostics()">[START DIAGNOSTICS]</button>
-        </div>
-        <div class="output" id="output">Press [START DIAGNOSTICS] to run system hardware scan...</div>
-    </div>
-</div>
+    <h1>🥚 Rare Egg Tracker</h1>
+    <input type="text" id="searchInput" class="search-box" placeholder="ค้นหาชื่อผู้เล่น...">
+    <div class="grid" id="dataGrid"></div>
 
-<script>
-    async function getGPUInfo() {
-        const canvas = document.createElement('canvas');
-        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        if (!gl) return { vendor: 'N/A', renderer: 'N/A', webglVersion: 'Not Supported' };
-        
-        const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-        const vendor = debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : 'Generic Vendor';
-        const renderer = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'Generic Renderer';
-        
-        return {
-            vendor: vendor,
-            renderer: renderer,
-            webglVersion: gl.getParameter(gl.VERSION)
+    <!-- ใช้ Firebase JS SDK รูปแบบ Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            databaseURL: "https://key1-ab4b3-default-rtdb.asia-southeast1.firebasedatabase.app"
         };
-    }
 
-    async function getBatteryInfo() {
-        if ('getBattery' in navigator) {
-            try {
-                const battery = await navigator.getBattery();
-                return {
-                    level: `${Math.round(battery.level * 100)}%`,
-                    charging: battery.charging ? 'Charging (เสียบปลั๊กอยู่)' : 'Discharging (ใช้แบตเตอรี่)'
-                };
-            } catch (e) {
-                return { level: 'N/A', charging: 'N/A' };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const serversRef = ref(db, 'servers');
+        let currentData = {};
+
+        // onValue จะทำงานทันทีที่มีข้อมูลอัปเดตใน Firebase (เรียลไทม์)
+        onValue(serversRef, (snapshot) => {
+            currentData = snapshot.val() || {};
+            renderCards();
+        });
+
+        function renderCards() {
+            const grid = document.getElementById('dataGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            grid.innerHTML = '';
+            const now = Date.now();
+
+            for (const [username, data] of Object.entries(currentData)) {
+                // ซ่อนผู้เล่นที่ไม่อัปเดตข้อมูลเกิน 2 นาที (120000 ms) - สมมติว่าออกเกมไปแล้ว
+                if (now - data.lastUpdated > 120000) continue;
+
+                if (username.toLowerCase().includes(search)) {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="username">👤 ${username}</div>
+                        <div class="stat highlight"><span>Rare Eggs:</span> <span>${data.eggCount} ฟอง</span></div>
+                        <div class="stat"><span>Players:</span> <span>${data.playerCount} คน</span></div>
+                        <div class="stat"><span>Night In:</span> <span>${data.nightTimer}</span></div>
+                    `;
+                    grid.appendChild(card);
+                }
             }
         }
-        return { level: 'Desktop / Not Supported', charging: 'N/A' };
-    }
 
-    async function runDiagnostics() {
-        const btn = document.getElementById('startBtn');
-        const output = document.getElementById('output');
+        document.getElementById('searchInput').addEventListener('input', renderCards);
         
-        btn.disabled = true;
-        btn.style.opacity = '0.5';
-        output.innerHTML = 'Executing system inspection script...<br>Fetching hardware profiles... <span class="cursor"></span>';
-
-        // Fake loading effect for CMD feel
-        await new Promise(r => setTimeout(r, 800));
-
-        const gpu = await getGPUInfo();
-        const battery = await getBatteryInfo();
-        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
-        const sysData = {
-            Cores: navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} Threads` : 'Unknown',
-            RAM: navigator.deviceMemory ? `~${navigator.deviceMemory} GB` : 'Protected / Unknown',
-            GPUVendor: gpu.vendor,
-            GPURenderer: gpu.renderer,
-            WebGL: gpu.webglVersion,
-            ScreenRes: `${window.screen.width} x ${window.screen.height} px`,
-            AvailRes: `${window.screen.availWidth} x ${window.screen.availHeight} px`,
-            ColorDepth: `${window.screen.colorDepth}-bit`,
-            PixelRatio: `${window.devicePixelRatio}x`,
-            OS: navigator.platform,
-            UserAgent: navigator.userAgent,
-            Language: navigator.language,
-            Timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            TouchPoints: navigator.maxTouchPoints || 0,
-            BatteryLevel: battery.level,
-            BatteryStatus: battery.charging,
-            OnlineStatus: navigator.onLine ? 'ONLINE' : 'OFFLINE',
-            NetworkType: conn ? (conn.effectiveType || 'N/A').toUpperCase() : 'N/A',
-            Downlink: conn ? `${conn.downlink} Mbps` : 'N/A',
-            RTT: conn ? `${conn.rtt} ms` : 'N/A'
-        };
-
-        output.innerHTML = `
-<div class="section-title">[+] PROCESSOR & MEMORY</div>
-<span class="key">CPU Logical Cores :</span> <span class="value">${sysData.Cores}</span>
-<span class="key">Approximate RAM    :</span> <span class="value">${sysData.RAM}</span>
-
-<div class="section-title">[+] GRAPHICS & DISPLAY</div>
-<span class="key">GPU Vendor        :</span> <span class="value">${sysData.GPUVendor}</span>
-<span class="key">GPU Renderer      :</span> <span class="value">${sysData.GPURenderer}</span>
-<span class="key">WebGL Driver      :</span> <span class="value">${sysData.WebGL}</span>
-<span class="key">Screen Resolution :</span> <span class="value">${sysData.ScreenRes}</span>
-<span class="key">Usable Resolution :</span> <span class="value">${sysData.AvailRes}</span>
-<span class="key">Color Depth       :</span> <span class="value">${sysData.ColorDepth}</span>
-<span class="key">Device Pixel Ratio:</span> <span class="value">${sysData.PixelRatio}</span>
-
-<div class="section-title">[+] POWER & HARDWARE ENVIRONMENT</div>
-<span class="key">Battery Level     :</span> <span class="value">${sysData.BatteryLevel}</span>
-<span class="key">Power Source      :</span> <span class="value">${sysData.BatteryStatus}</span>
-<span class="key">Max Touch Points  :</span> <span class="value">${sysData.TouchPoints}</span>
-
-<div class="section-title">[+] OPERATING SYSTEM & BROWSER</div>
-<span class="key">Platform / OS     :</span> <span class="value">${sysData.OS}</span>
-<span class="key">System Language   :</span> <span class="value">${sysData.Language}</span>
-<span class="key">System Timezone   :</span> <span class="value">${sysData.Timezone}</span>
-<span class="key">User Agent        :</span> <span class="value">${sysData.UserAgent}</span>
-
-<div class="section-title">[+] NETWORK & METRICS</div>
-<span class="key">Network Status    :</span> <span class="value">${sysData.OnlineStatus}</span>
-<span class="key">Effective Type    :</span> <span class="value">${sysData.NetworkType}</span>
-<span class="key">Estimated Speed   :</span> <span class="value">${sysData.Downlink}</span>
-<span class="key">Latency (RTT)     :</span> <span class="value">${sysData.RTT}</span>
-
-------------------------------------------------------------------
-<span style="color: #00ff66;">[SUCCESS] System diagnostic complete. All metrics loaded.</span>
-`;
-        btn.disabled = false;
-        btn.style.opacity = '1';
-    }
-</script>
-
+        // ให้หน้าเว็บเช็กข้อมูลเก่าแล้วลบออกเองเรื่อยๆ
+        setInterval(renderCards, 10000); 
+    </script>
 </body>
 </html>
